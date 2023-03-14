@@ -1,6 +1,4 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// [[SETUP]]
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,7 +8,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Quotes
+// [[QUOTES]]
 model Quote {
     id String @id @default(uuid())
     lines QuoteLine[]
@@ -29,24 +27,28 @@ model QuoteLine {
 }
 
 model Author {
-    id String @id @default(uuid())
-    name String
-    lines QuoteLine[]
+    id      String      @id @default(uuid())
+    name    String
+    lines   QuoteLine[]
+
+    user    User        @relation(fields: [userID], references: [id])
+    userID  String
 }
 
-// Authentification
+// [[AUTHENTIFICATION]] (NextAuth)
+// Mostly copyied from here -> https://next-auth.js.org/adapters/prisma
 model Account {
   id                 String  @id @default(cuid())
   userId             String
   type               String
   provider           String
   providerAccountId  String
-  refresh_token      String?  @db.Text
-  access_token       String?  @db.Text
+  refresh_token      String?
+  access_token       String?
   expires_at         Int?
   token_type         String?
   scope              String?
-  id_token           String?  @db.Text
+  id_token           String?
   session_state      String?
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -63,13 +65,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?     @unique
   emailVerified DateTime?
   image         String?
   accounts      Account[]
   sessions      Session[]
+  
+  aliases       Author[]
 }
 
 model VerificationToken {
