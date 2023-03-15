@@ -20,14 +20,15 @@ model Quote {
 }
 
 model QuoteLine {
-    id String @id @default(uuid())
+    id          String  @id @default(uuid())
 
-    line    String
-    author  User @relation(fields: [userID], references: [id])
-    quote   Quote @relation(fields: [quoteID], references: [id])
+    line        String
+    authorAlias String?
+    author      User?   @relation(fields: [userID], references: [id])
+    quote       Quote   @relation(fields: [quoteID], references: [id])
 
-    quoteID String
-    userID  String
+    quoteID     String
+    userID      String?
 }
 
 // [[AUTHENTIFICATION]] (NextAuth)
