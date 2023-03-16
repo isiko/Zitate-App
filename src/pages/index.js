@@ -1,12 +1,25 @@
 import Head from 'next/head'
-import Image from 'next/image'
 import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
 import LoginBtn from '@/components/login-btn'
+import { getQuotes } from '@/lib/dbHelper'
 
 const inter = Inter({ subsets: ['latin'] })
 
-export default function Home() {
+export async function getServerSideProps(context) {
+    const quotes = await getQuotes(context.query);
+    const data = JSON.stringify(quotes);
+
+    console.log(data);
+
+    return {
+        props: {
+            quotes: data,
+        }
+    }
+}
+
+export default function Home({ quotes }) {
+    const json = JSON.parse(quotes);
   return (
     <>
       <Head>
@@ -18,6 +31,27 @@ export default function Home() {
       <main>
         <h1>Hi :)</h1>
         <LoginBtn />
+        {
+            json.map((quote) => {
+                return (
+                    <div key={quote.id}>
+                        <h2>{quote.date}</h2>
+                        <ul>
+                            {
+                                quote.lines.map((line) => {
+                                    return (
+                                        <li key={line.id}>
+                                            <p>{ line.author ? line.author.name : line.authorAlias}: {line.line}</p>
+                                            <p></p>
+                                        </li>
+                                    )
+                                })
+                            }
+                        </ul>
+                    </div>
+                )
+            })
+        }
       </main>
     </>
   )
