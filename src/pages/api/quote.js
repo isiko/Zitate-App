@@ -1,82 +1,46 @@
 import { PrismaClient } from '@prisma/client';
-import { useRouter } from 'next/router';
+import { getServerSession } from 'next-auth';
+import { authOptions } from './auth/[...nextauth]';
+import { getQuotes, createQuote } from '@/lib/dbHelper';
 
 const prisma = new PrismaClient();
 
-const userQuery = {
-    select: {
-        id: true,
-        name: true,
-        image: true,
-    },
-}
+export default async function handler(req, res) {
+    const session = await getServerSession(req, res, authOptions)
 
-export default function handler(req, res) {
     if (req.method === 'GET') {
         const queries = req.query;
-        const query = {
-            select: {
-                id: true,
-                date: true,
-                creator: userQuery,
-                lines: {
-                    select: {
-                        id: true,
-                        line: true,
-                        author: userQuery,
-                        authorAlias: true,
-                    },
-                },
-            },
-            where: {
-                creator: queries.creator ? {
-                    OR: [
-                        { name: queries.creator },
-                        { id: queries.creator },
-                    ]
-                } : undefined,
-                date: queries.before || queries.after ? {
-                    AND: [
-                        queries.before ? { lte: queries.before } : undefined,
-                        queries.after ? { gte: queries.after } : undefined,
-                    ]
-                } : undefined,
-                lines: queries.author ? {
-                    some: {
-                        OR: [
-                            { 
-                                authorAlias: {
-                                    in: queries.author
-                                }, 
-                            },
-                            { 
-                                author: {
-                                    OR: [
-                                        { id: {in: queries.author}, },
-                                        { name: {in: queries.author}, }
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                } : undefined,
-            },
-        };
-        prisma.quote.findMany(query).then((quotes) => {
-            for (const quote of quotes) {
-                for (const line of quote.lines) {
-                    line.author = {
-                        name: line.author ? line.author.name : line.authorAlias,
-                        image: line.author ? line.author.image : undefined,
-                    }
-                    line.authorAlias = undefined;
-                }
-            }
-            res.status(200).json(quotes);
-        });
+        getQuotes(queries)
+            .then((quotes) => {
+                res.status(200).json(quotes);
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).send();
+            });
     } else if (req.method === 'POST') {
-        res.status(200).json({ message: 'POST request' });
+        if (!session) {
+            res.status(401).send();
+            return;
+        }
+        
+        const { date, lines } = req.body;
+        const creator = session.user.email;
+
+        if (!lines || lines.length === 0) {
+            res.status(400).send();
+            return;
+        }
+
+        createQuote(date, lines, creator)
+            .then((quote) => {
+                res.status(200).send();
+            })
+            .catch((err) => {
+                console.error(err);
+                res.status(500).send();
+            });
     } else {
-        res.status(405).json({ message: 'Method not allowed' });
+        res.status(405).send();
     }
 }
