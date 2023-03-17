@@ -9,8 +9,6 @@ export async function getServerSideProps(context) {
     const quotes = await getQuotes(context.query);
     const data = JSON.stringify(quotes);
 
-    console.log(data);
-
     return {
         props: {
             quotes: data,
