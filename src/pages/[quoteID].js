@@ -16,7 +16,7 @@ export async function getServerSideProps(context) {
 export default function QuotePage({ quote }) {
     return (
         <Layout>
-            <Quote quote={JSON.parse(quote)} />
+            <Quote quote={JSON.parse(quote)} focused={true}/>
         </Layout>
     )
 }

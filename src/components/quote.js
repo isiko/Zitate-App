@@ -1,11 +1,12 @@
+import Link from 'next/link'
 import { useSession } from "next-auth/react"
 
 
-export default function Quote({ quote }) {
-    const session = useSession();
+export default function Quote({ quote, focused }) {
+    const { data: session } = useSession()
 
     return (
-    <div className="p-3 m-2 rounded bg-secondary text-white">
+        <div className="p-3 m-2 rounded bg-secondary text-white">
             <ul>
             {
                 quote.lines.map((line) => {
@@ -18,12 +19,17 @@ export default function Quote({ quote }) {
                 })
             }
             </ul>
-            <button type="button" className="btn btn-danger" onClick={() => 
-                fetch(`/api/quote`, {
-                    method: 'DELETE',
-                    body: JSON.stringify({ id: quote.id }),
-                })
-            }>Delete</button>
+            <p>Posted by: {quote.creator.name}</p>
+            { !focused ? <Link href={`/${quote.id}`} className="btn btn-info">Show</Link> : null }
+            {
+                session && session.user.email === quote.creator.email ? null :
+                <button type="button" className="btn btn-danger" onClick={() => 
+                    fetch(`/api/quote`, {
+                        method: 'DELETE',
+                        body: JSON.stringify({ id: quote.id }),
+                    })
+                }>Delete</button>
+            }
         </div>
     )
 }
