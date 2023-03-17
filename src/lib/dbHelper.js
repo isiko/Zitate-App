@@ -65,6 +65,13 @@ async function getQuotes(queries) {
     return await prisma.quote.findMany(query);
 }
 
+async function getQuote(id) {
+    return await prisma.quote.findUnique({
+        where: { id: id },
+        ...quoteQuery,
+    });
+}
+
 async function createQuote(date, lines, creator) {
     return await prisma.quote.create({
         data: {
@@ -98,6 +105,7 @@ async function deleteQuote(id) {
 
 module.exports = {
     getQuotes,
+    getQuote,
     createQuote,
     deleteQuote,
 }
