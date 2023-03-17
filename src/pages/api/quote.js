@@ -33,7 +33,7 @@ export default async function handler(req, res) {
         }
 
         createQuote(date, lines, creator)
-            .then((quote) => {
+            .then(() => {
                 res.status(200).send();
             })
             .catch((err) => {
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         }
 
         // Get Data from Request
-        const { id } = req.body;
+        const { id } = JSON.parse(req.body);
         const creatorEmail = session.user.email;
 
         // Check if an ID was provided
@@ -76,7 +76,7 @@ export default async function handler(req, res) {
 
         // Delete Quote
         deleteQuote(id)
-            .then((quote) => {
+            .then(() => {
                 res.status(200).send();
             })
             .catch((err) => {

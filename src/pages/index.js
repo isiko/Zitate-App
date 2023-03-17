@@ -2,6 +2,7 @@ import Head from 'next/head'
 import { Inter } from 'next/font/google'
 import LoginBtn from '@/components/login-btn'
 import { getQuotes } from '@/lib/dbHelper'
+import Quote from '@/components/quote'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -30,25 +31,7 @@ export default function Home({ quotes }) {
         <h1>Hi :)</h1>
         <LoginBtn />
         {
-            json.map((quote) => {
-                return (
-                    <div key={quote.id}>
-                        <h2>{quote.date}</h2>
-                        <ul>
-                            {
-                                quote.lines.map((line) => {
-                                    return (
-                                        <li key={line.id}>
-                                            <p>{ line.author ? line.author.name : line.authorAlias}: {line.line}</p>
-                                            <p></p>
-                                        </li>
-                                    )
-                                })
-                            }
-                        </ul>
-                    </div>
-                )
-            })
+            json.map((quote) => <Quote key={quote.id} quote={quote} />)
         }
       </main>
     </>
