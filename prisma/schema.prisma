@@ -25,7 +25,7 @@ model QuoteLine {
     line        String
     authorAlias String?
     author      User?   @relation(fields: [userID], references: [id])
-    quote       Quote   @relation(fields: [quoteID], references: [id])
+    quote       Quote   @relation(fields: [quoteID], references: [id], onDelete: Cascade)
 
     quoteID     String
     userID      String?

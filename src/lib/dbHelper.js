@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 
+// Docs -> https://www.prisma.io/docs/concepts/components/prisma-client
 const prisma = new PrismaClient();
 
 const userQuery = {
@@ -89,7 +90,14 @@ async function createQuote(date, lines, creator) {
     });
 }
 
+async function deleteQuote(id) {
+    return await prisma.quote.delete({
+        where: { id: id },
+    });
+}
+
 module.exports = {
     getQuotes,
     createQuote,
+    deleteQuote,
 }
