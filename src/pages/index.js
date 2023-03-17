@@ -28,7 +28,6 @@ export default function Home({ quotes }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <h1>Hi :)</h1>
         <LoginBtn />
         {
             json.map((quote) => <Quote key={quote.id} quote={quote} />)

@@ -5,13 +5,13 @@ export default function Component() {
   if (session) {
     return (
       <>
-        <button type="button" class="btn btn-danger" onClick={() => signOut()}>Sign out</button>
+        <button type="button" className="btn btn-danger" onClick={() => signOut()}>Sign out</button>
       </>
     )
   }
   return (
     <>
-      <button type="button" class="btn btn-primary" onClick={() => signIn()}>Sign in</button>
+      <button type="button" className="btn btn-primary" onClick={() => signIn()}>Sign in</button>
     </>
   )
 }

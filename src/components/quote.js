@@ -5,7 +5,7 @@ export default function Quote({ quote }) {
     const session = useSession();
 
     return (
-    <div class="p-3 m-2 rounded bg-secondary text-white">
+    <div className="p-3 m-2 rounded bg-secondary text-white">
             <ul>
             {
                 quote.lines.map((line) => {
@@ -18,7 +18,7 @@ export default function Quote({ quote }) {
                 })
             }
             </ul>
-            <button type="button" class="btn btn-danger" onClick={() => 
+            <button type="button" className="btn btn-danger" onClick={() => 
                 fetch(`/api/quote`, {
                     method: 'DELETE',
                     body: JSON.stringify({ id: quote.id }),
