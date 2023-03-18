@@ -11,24 +11,22 @@ const userQuery = {
     },
 }
 const quoteQuery = {
-    select: {
-        id: true,
-        date: true,
-        creator: userQuery,
-        lines: {
-            select: {
-                id: true,
-                line: true,
-                author: userQuery,
-                authorAlias: true,
-            },
+    id: true,
+    date: true,
+    creator: userQuery,
+    lines: {
+        select: {
+            id: true,
+            line: true,
+            author: userQuery,
+            authorAlias: true,
         },
     },
 };
 
 async function getQuotes(queries) {
-    const query = quoteQuery;
-    query.where = {
+    let query = {
+        select: quoteQuery,
         creator: queries.creator ? {
             OR: [
                 { name: queries.creator },
@@ -69,10 +67,64 @@ async function getQuote(id) {
     const data = await prisma.quote.findMany({
         where: { id: id },
         take: 1,
-        ...quoteQuery,
+        select: quoteQuery,
     })
 
     return data[0];
+}
+
+async function updateQuote(id, date, lines) {
+    let lineIds = lines.filter((line) => line.id).map((line) => line.id);
+    await prisma.quoteLine.deleteMany({
+        where: {
+            NOT: {
+                id: {
+                    in: lineIds,
+                }
+            }
+        }
+    });
+    await prisma.quote.update({
+        where: { id: id },
+        data: {
+            date: date,
+            lines: {
+                create: lines.filter((line) => !line.id).map((line) => {
+                    return {
+                        line: line.line,
+                        authorAlias: line.authorAlias,
+                        author: line.author ? {
+                            connect: { 
+                                id: line.author,
+                            }
+                        } : undefined,
+                    }
+                })
+            }
+        }
+    });
+    await prisma.quote.update({
+        where: { id: id },
+        data: {
+            date: date,
+            lines: {
+                update: lines.filter((line) => line.id).map((line) => {
+                    return {
+                        where: { id: line.id },
+                        data: {
+                            line: line.line,
+                            authorAlias: line.authorAlias,
+                            author: line.author ? {
+                                connect: { 
+                                    id: line.author,
+                                }
+                            } : undefined,
+                        },
+                    }
+                })
+            }
+        }
+    });
 }
 
 async function createQuote(date, lines, creator) {
@@ -110,5 +162,6 @@ module.exports = {
     getQuotes,
     getQuote,
     createQuote,
+    updateQuote,
     deleteQuote,
 }

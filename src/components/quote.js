@@ -25,7 +25,7 @@ export default function Quote({ quote, focused }) {
                 {
                     session && session.user.email === quote.creator.email ? null :
                         <>
-                            <Link href={`/edit/${quote.id}`} className="btn btn-warning">Edit</Link>
+                            <Link href={`/edit?id=${quote.id}`} className="btn btn-warning">Edit</Link>
                             <button type="button" className="btn btn-danger" onClick={() => 
                                 fetch(`/api/quote`, {
                                     method: 'DELETE',

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import Layout from '@/components/layout'
 import { getQuotes } from '@/lib/dbHelper'
 import Quote from '@/components/quote'

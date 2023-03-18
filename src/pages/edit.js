@@ -3,19 +3,14 @@ import Quote from '@/components/quote'
 import { getQuote } from '@/lib/dbHelper'
 import { useState } from 'react'
 
-const lineTemplate = {
-    authorName: "",
-    line: "",
-}
-
 export async function getServerSideProps(context) {
-    const { quoteID } = context.params;
+    const { id } = context.query;
 
-    if (!quoteID) {
+    if (!id) {
         return { props: {}}
     }
 
-    const quote = await getQuote(quoteID);
+    const quote = await getQuote(id);
 
     if (!quote) {
         return { props: {}}
@@ -32,16 +27,12 @@ export async function getServerSideProps(context) {
     }
 }
 
-function handleSubmit(e) {
-        e.preventDefault();
-}
-
 export default function QuotePage({ quote }) {
     if (quote){
         quote = JSON.parse(quote);
     }
 
-    const [ data, setData ] = useState(quote ? quote.lines : [lineTemplate]);
+    const [ data, setData ] = useState(quote ? quote.lines : [{}]);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -68,8 +59,6 @@ export default function QuotePage({ quote }) {
             //date: quote ? quote.date : new Date(), // Removed for now, maybe add later
             lines: lines,
         }
-
-        console.log(quote);
 
         fetch('/api/quote', {
             method: 'POST',
@@ -102,7 +91,7 @@ export default function QuotePage({ quote }) {
                                     lines[index].line = e.target.value;
                                     setData(lines);
                                 }} defaultValue={line.line}/>
-                                <button type="button" className="btn btn-danger" onClick={()=>{setData(data.filter((_, i)=>i!==index))}}>Delete</button>
+                                { data.length > 1 ? <button type="button" className="btn btn-danger" onClick={()=>{setData(data.filter((_, i)=>i!==index))}}>Delete</button> : null }
                             </div>
                         )
                     })
@@ -110,7 +99,8 @@ export default function QuotePage({ quote }) {
                 <div className="input-group mb-3">
                     <button type="button" className="btn btn-primary w-100" onClick={()=>{
                         let lines = data.slice(0);
-                        lines.push(lineTemplate)
+                        console.log();
+                        lines.push({});
                         setData(lines)
                     }}>Add Line</button>
                 </div>

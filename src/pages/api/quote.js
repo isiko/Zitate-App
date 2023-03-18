@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 import { authOptions } from './auth/[...nextauth]';
-import { getQuotes, createQuote, deleteQuote } from '@/lib/dbHelper';
+import { getQuotes, createQuote, updateQuote, deleteQuote } from '@/lib/dbHelper';
 
 const prisma = new PrismaClient();
 
@@ -24,26 +24,34 @@ export default async function handler(req, res) {
             return;
         }
         
-        console.log(req.body);
-
-        const { date, lines } = JSON.parse(req.body);
+        const { id, date, lines } = JSON.parse(req.body);
         const creator = session.user.email;
-
-        console.log(lines);
 
         if (!lines || lines.length === 0) {
             res.status(400).send();
             return;
         }
 
-        createQuote(date, lines, creator)
-            .then(() => {
-                res.status(200).send();
-            })
-            .catch((err) => {
-                console.error(err);
-                res.status(500).send();
-            });
+        if (id) {
+            console.log("Updating Quote");
+            updateQuote(id, date, lines)
+                .then(() => {
+                    res.status(200).send();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    res.status(500).send();
+                });
+        } else {
+            createQuote(date, lines, creator)
+                .then(() => {
+                    res.status(200).send();
+                })
+                .catch((err) => {
+                    console.error(err);
+                    res.status(500).send();
+                });
+        }
     } else if (req.method === 'DELETE') {
         // Check if User is logged in
         if (!session) {
