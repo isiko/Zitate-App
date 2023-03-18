@@ -1,7 +1,6 @@
 import Link from 'next/link'
 import { useSession } from "next-auth/react"
 
-
 export default function Quote({ quote, focused }) {
     const { data: session } = useSession()
 
@@ -23,7 +22,7 @@ export default function Quote({ quote, focused }) {
             <div>
                 { !focused ? <Link href={`/${quote.id}`} className="btn btn-info">Show</Link> : null }
                 {
-                    session && session.user.email === quote.creator.email ? null :
+                    session && session.user.id === quote.creator.id ? 
                         <>
                             <Link href={`/edit?id=${quote.id}`} className="btn btn-warning">Edit</Link>
                             <button type="button" className="btn btn-danger" onClick={() => 
@@ -33,6 +32,7 @@ export default function Quote({ quote, focused }) {
                                 })
                             }>Delete</button>
                         </>
+                    : null
                 }
             </div>
         </div>
