@@ -2,8 +2,20 @@ import Layout from '@/components/layout'
 import Quote from '@/components/quote'
 import { getQuote } from '@/lib/dbHelper'
 import { useState } from 'react'
+import { getServerSession } from "next-auth/next"
+import { authOptions } from "./api/auth/[...nextauth]"
 
 export async function getServerSideProps(context) {
+    const session = await getServerSession(context.req, context.res, authOptions)
+    if (!session) {
+        return {
+            redirect: {
+                destination: "/api/auth/signin",
+                permanent: false,
+            }
+        }
+    }
+
     const { id } = context.query;
 
     if (!id) {
