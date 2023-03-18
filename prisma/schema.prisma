@@ -10,7 +10,7 @@ datasource db {
 
 // [[QUOTES]]
 model Quote {
-    id      String @id @default(uuid())
+    id      String @id @default(uuid()) @unique
 
     lines   QuoteLine[]
     date    DateTime @default(now())
