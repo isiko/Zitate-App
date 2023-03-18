@@ -99,7 +99,6 @@ export default function QuotePage({ quote }) {
                 <div className="input-group mb-3">
                     <button type="button" className="btn btn-primary w-100" onClick={()=>{
                         let lines = data.slice(0);
-                        console.log();
                         lines.push({});
                         setData(lines)
                     }}>Add Line</button>

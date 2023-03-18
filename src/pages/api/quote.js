@@ -33,7 +33,6 @@ export default async function handler(req, res) {
         }
 
         if (id) {
-            console.log("Updating Quote");
             updateQuote(id, date, lines)
                 .then(() => {
                     res.status(200).send();
