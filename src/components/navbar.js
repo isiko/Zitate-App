@@ -5,7 +5,7 @@ export default function Navbar() {
     return (
         <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
         <div className="container-fluid">
-        <Link class="navbar-brand" href="/">Zitate-App</Link>
+        <Link className="navbar-brand" href="/">Zitate-App</Link>
         <LoginBtn />  
         </div>
         </nav>

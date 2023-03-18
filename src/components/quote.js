@@ -20,16 +20,21 @@ export default function Quote({ quote, focused }) {
             }
             </ul>
             <p>Posted by: {quote.creator.name}</p>
-            { !focused ? <Link href={`/${quote.id}`} className="btn btn-info">Show</Link> : null }
-            {
-                session && session.user.email === quote.creator.email ? null :
-                <button type="button" className="btn btn-danger" onClick={() => 
-                    fetch(`/api/quote`, {
-                        method: 'DELETE',
-                        body: JSON.stringify({ id: quote.id }),
-                    })
-                }>Delete</button>
-            }
+            <div>
+                { !focused ? <Link href={`/${quote.id}`} className="btn btn-info">Show</Link> : null }
+                {
+                    session && session.user.email === quote.creator.email ? null :
+                        <>
+                            <Link href={`/edit/${quote.id}`} className="btn btn-warning">Edit</Link>
+                            <button type="button" className="btn btn-danger" onClick={() => 
+                                fetch(`/api/quote`, {
+                                    method: 'DELETE',
+                                    body: JSON.stringify({ id: quote.id }),
+                                })
+                            }>Delete</button>
+                        </>
+                }
+            </div>
         </div>
     )
 }

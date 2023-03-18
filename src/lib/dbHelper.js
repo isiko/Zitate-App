@@ -65,6 +65,7 @@ async function getQuotes(queries) {
     return await prisma.quote.findMany(query);
 }
 
+//TODO: Sometimes prisma complains about not enough fiels provided and marks the "id" field as optional, this should be fixed some time
 async function getQuote(id) {
     return await prisma.quote.findUnique({
         where: { id: id },
