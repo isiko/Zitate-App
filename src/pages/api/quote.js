@@ -24,8 +24,12 @@ export default async function handler(req, res) {
             return;
         }
         
-        const { date, lines } = req.body;
+        console.log(req.body);
+
+        const { date, lines } = JSON.parse(req.body);
         const creator = session.user.email;
+
+        console.log(lines);
 
         if (!lines || lines.length === 0) {
             res.status(400).send();
